@@ -8,6 +8,9 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![WorkBuddy](https://img.shields.io/badge/WorkBuddy-Skill-orange.svg)](https://www.workbuddy.cn/)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-purple.svg)](#安装跨平台)
+[![Hermes](https://img.shields.io/badge/Hermes%20Agent-compatible-teal.svg)](#安装跨平台)
+[![Codex](https://img.shields.io/badge/Codex%20CLI-compatible-green.svg)](#安装跨平台)
 [![Standards](https://img.shields.io/badge/standards-7074-green.svg)](#数据资产)
 [![Laws](https://img.shields.io/badge/laws-108-red.svg)](#数据资产)
 
@@ -35,23 +38,55 @@
 - ✅ 事故处置与应急管理
 - ✅ 安全生产标准化建设
 
-## 🚀 安装
+## 🚀 安装（跨平台）
 
-把整个 `safety-standards-advisor` 目录复制到你的 WorkBuddy 技能目录：
+本技能兼容主流 AI 编码助手与 Agent 框架。先 clone，再按你用的工具放到对应目录即可：
 
 ```bash
-# Windows
-cp -r safety-standards-advisor "$USERPROFILE/.workbuddy/skills/"
-
-# macOS / Linux
-cp -r safety-standards-advisor ~/.workbuddy/skills/
+git clone https://github.com/fengeail/safety-standards-advisor.git
 ```
 
-在 WorkBuddy 对话中直接说「**安全生产标准顾问**」，或描述你的安全生产问题即可触发，例如：
+### 各平台安装位置
+
+| 平台 | 安装目录 | 加载方式 | 兼容文件 |
+| --- | --- | --- | --- |
+| **WorkBuddy** | `~/.workbuddy/skills/safety-standards-advisor/` | 自动识别 `SKILL.md` | `SKILL.md` |
+| **Claude Code** | `.claude/skills/safety-standards-advisor/` | 自动识别 `SKILL.md` + `allowed-tools` | `SKILL.md` |
+| **Hermes Agent** | `~/.hermes/skills/safety-standards-advisor/` | 自动识别 `SKILL.md`（兼容 agentskills.io） | `SKILL.md` |
+| **OpenClaw** | 技能目录 | 兼容 agentskills.io 开放标准 | `SKILL.md` |
+| **Codex CLI** | 项目根目录 | 自动读取 `AGENTS.md` | `AGENTS.md` |
+| **Cursor** | 项目根 或 `.cursor/skills/` | 读取 `.cursorrules` | `.cursorrules` |
+
+一键复制命令：
+
+```bash
+# WorkBuddy
+cp -r safety-standards-advisor ~/.workbuddy/skills/
+
+# Claude Code（项目级）
+mkdir -p .claude/skills && cp -r safety-standards-advisor .claude/skills/
+
+# Hermes Agent
+cp -r safety-standards-advisor ~/.hermes/skills/
+
+# Codex CLI / Cursor —— 直接在项目根使用，无需复制
+cd safety-standards-advisor && codex   # Codex 自动读 AGENTS.md
+# Cursor 自动读 .cursorrules
+```
+
+安装后直接对话即可触发，例如：
 
 > 我们车间粉尘比较大，除尘系统有哪些法定要求？
 
 > 登高作业 2 米以上需要办理哪些手续？
+
+> GB 30871 动火作业有什么要求？
+
+### 兼容性说明
+
+- 本技能的脚本仅用 **Python 标准库**（csv/json/os/argparse），无第三方依赖，任何平台都能跑。
+- 各平台的加载入口文件已全部内置（`SKILL.md` / `AGENTS.md` / `.cursorrules`），互不冲突。
+- 正文件索需要你自行配置标准库（见下文「用自己的标准库重建索引」）；仅做法规/标准号检索则开箱即用。
 
 ## 📦 数据资产
 
@@ -113,11 +148,14 @@ export SAFETY_CORPUS="D:/你的语料库"   # 含 index.jsonl
 
 ```
 safety-standards-advisor/
-├── SKILL.md                     # 技能定义与工作流
+├── SKILL.md                     # 技能定义（WorkBuddy / Claude Code / Hermes / OpenClaw）
+├── AGENTS.md                    # Codex CLI 项目指令
+├── .cursorrules                 # Cursor 规则
 ├── README.md
+├── LICENSE
 ├── references/
 │   ├── 标准目录.csv             # 7074 条标准索引
-│   ├── stdno_index.json         # 标准号 → 路径映射
+│   ├── stdno_index.json         # 标准号 → 路径映射（2070 个）
 │   ├── law_index.json           # 108 部法律法规四级索引
 │   └── topics/                  # 11 篇主题手册
 │       ├── 用电安全.md
